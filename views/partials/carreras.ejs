@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Pensum</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .curso { 
+            padding: 10px; 
+            margin-bottom: 5px; 
+            background-color: #f0f0f0; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: 0.3s;
+        }
+        .curso:hover {
+            background-color: #e0e0e0;
+        }
+        .prerrequisito { 
+            background-color: yellow !important; 
+        }
+        .seleccionado {
+            border: 2px solid red;
+        }
+    </style>
+</head>
+<body class="container">
+    <h1 class="my-4">Listado de Pensum</h1>
+
+    <% carreras.forEach(carrera => { 
+        const carreraId = carrera.nombre.replace(/\s+/g, '');
+    %>
+        <h2>Carrera: <%= carrera.nombre %></h2>
+        <% carrera.semestres.forEach(semestre => { %>
+            <h3>Semestre: <%= semestre.numero %></h3>
+            <div class="row mb-4">
+                <% semestre.cursos.forEach(curso => { %>
+                    <div class="col-md-3 curso" 
+                        id="curso-<%= carreraId %>-<%= curso.numero %>" 
+                        onclick="mostrarPrerrequisitos('<%= carreraId %>', <%= curso.numero %>)">
+                        <strong>Curso: <%= curso.numero %></strong><br>
+                        Nombre: <%= curso.name %><br>
+                        Área: <%= curso.area %><br>
+                        Prerrequisitos: 
+                        <% if (curso.prerrequisitos.length > 0) { %>
+                            <%= curso.prerrequisitos.join(', ') %>
+                        <% } else { %>
+                            Ninguno
+                        <% } %>
+                    </div>
+                <% }) %>
+            </div>
+        <% }) %>
+    <% }) %>
+
+    <script>
+        const carreras = <%- JSON.stringify(carreras) %>;
+
+        function mostrarPrerrequisitos(carreraId, codigo) {
+            document.querySelectorAll('.curso').forEach(el => {
+                el.classList.remove('prerrequisito');
+                el.classList.remove('seleccionado');
+            });
+
+            const carrera = carreras.find(c => c.nombre.replace(/\s+/g, '') === carreraId);
+            if (!carrera) return;
+
+            carrera.semestres.forEach(semestre => {
+                semestre.cursos.forEach(curso => {
+                    if (curso.numero === codigo) {
+                        const cursoSeleccionado = document.getElementById(`curso-${carreraId}-${codigo}`);
+                        if (cursoSeleccionado) {
+                            cursoSeleccionado.classList.add('seleccionado');
+                        }
+
+                        curso.prerrequisitos.forEach(prereq => {
+                            const prereqElement = document.getElementById(`curso-${carreraId}-${prereq}`);
+                            if (prereqElement) {
+                                prereqElement.classList.add('prerrequisito');
+                            }
+                        });
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>

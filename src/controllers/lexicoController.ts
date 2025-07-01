@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import LexicalAnalyzer from "../analyzer/LexicalAnalyzer";
-import SyntaxAnalyzer from "../analyzer/SyntaxAnalyzer";
-import { Type } from "../analyzer/Token";
+import { SyntaxAnalyzer } from "../analyzer/SyntaxAnalyzer";
+import { Transpiler } from "../analyzer/Transpiler";
 
 export const analizarLexico = (req: Request, res: Response): void => {
   const { entrada } = req.body;
@@ -14,28 +14,40 @@ export const analizarLexico = (req: Request, res: Response): void => {
   const analizador = new LexicalAnalyzer();
   analizador.scanner(entrada);
 
-  const tokens = analizador.getTokenList().map(token => ({
+  const tokens = analizador.getTokens().map(token => ({
     row: token.row,
-    colum: token.column,
-    lexema: token.lexeme,
-    typeTokenString: token.type
+    column: token.column,
+    lexeme: token.lexeme,
+    type: token.type
   }));
 
-  const erroresLexicos = analizador.getErrorList().map(error => ({
+  const erroresLexicos = analizador.getErrors().map(error => ({
     row: error.row,
-    colum: error.column,
-    lexema: error.lexeme,
-    typeTokenString: "Error Léxico"
+    column: error.column,
+    lexeme: error.lexeme,
+    type: "Error Léxico"
   }));
 
-  const analizadorSintactico = new SyntaxAnalyzer(analizador.getTokenList());
-  const erroresSintacticos = analizadorSintactico.analizar().map(mensaje => ({
-    mensaje,
-    typeTokenString: "Error Sintáctico"
-  }));
+  if (erroresLexicos.length > 0) {
+    return res.status(200).json({
+      tokens,
+      errores: erroresLexicos,
+      salida: [],
+      traduccion: ""
+    });
+  }
 
-  res.json({
+  const parser = new SyntaxAnalyzer(analizador.getTokens());
+  const instrucciones = parser.analizar();
+
+  const transpiler = new Transpiler(instrucciones);
+  const traduccion = transpiler.translate();
+  const salida = instrucciones.map(instr => instr.execute());
+
+  res.status(200).json({
     tokens,
-    errores: [...erroresLexicos, ...erroresSintacticos]
+    errores: [],
+    traduccion,
+    salida
   });
 };

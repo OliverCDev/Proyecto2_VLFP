@@ -22,7 +22,15 @@ class LexicalAnalyzer {
     this.errorList = [];
   }
 
-  scanner(input: string) {
+  public getTokens(): Token[] {
+    return this.tokenList;
+  }
+
+  public getErrors(): Token[] {
+    return this.errorList;
+  }
+
+  public scanner(input: string) {
     input += "#";
     let char: string;
     let state = 0;
@@ -55,7 +63,7 @@ class LexicalAnalyzer {
             this.row++;
             this.column = 0;
           } else if (this.isWhitespace(char)) {
-            // ignorar espacios, tabulaciones y retorno de carro
+            // ignorar espacios
           } else if (char === "#") {
             break;
           } else {
@@ -197,14 +205,6 @@ class LexicalAnalyzer {
 
   private isSymbol(char: string): boolean {
     return SYMBOLS.includes(char);
-  }
-
-  getTokenList(): Token[] {
-    return this.tokenList;
-  }
-
-  getErrorList(): Token[] {
-    return this.errorList;
   }
 }
 
