@@ -10,4 +10,8 @@ router.get('/', (req: Request, res: Response) => {
   res.render('index'); // <-- renderiza views/index.ejs
 });
 
+router.get("/errores", (req, res) => {
+  res.render("errores");
+});
+
 export default router;

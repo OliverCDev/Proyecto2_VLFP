@@ -5,7 +5,7 @@ const RESERVED_WORDS: string[] = [
   "if", "else", "for", "Console", "WriteLine", "true", "false"
 ];
 
-const SYMBOLS: string[] = ["+", "-", "*", "/", "=", ";", "(", ")", "{", "}", ",", "<", ">", "!"];
+const SYMBOLS: string[] = ["+", "-", "*", "/", "=", ";", "(", ")", "{", "}", ",", "<", ">", "!", "."];
 
 class LexicalAnalyzer {
   private row: number;
@@ -54,8 +54,8 @@ class LexicalAnalyzer {
           } else if (char === '\n') {
             this.row++;
             this.column = 0;
-          } else if (char === ' ' || char === '\t' || char === '\r') {
-            // ignore whitespace
+          } else if (this.isWhitespace(char)) {
+            // ignorar espacios, tabulaciones y retorno de carro
           } else if (char === "#") {
             break;
           } else {
@@ -66,7 +66,7 @@ class LexicalAnalyzer {
         case 1: // identificador o palabra reservada
           if (this.isLetterOrDigit(char)) {
             this.auxWord += char;
-          } else {
+          } else if (this.isWhitespace(char) || this.isSymbol(char) || char === "#" || char === '\n') {
             const type = RESERVED_WORDS.includes(this.auxWord)
               ? (["true", "false"].includes(this.auxWord) ? Type.BOOLEAN : Type.RESERVED)
               : Type.IDENTIFIER;
@@ -74,10 +74,14 @@ class LexicalAnalyzer {
             this.auxWord = "";
             state = 0;
             i--;
+          } else {
+            this.errorList.push(new Token(Type.ERROR, this.auxWord + char, this.row, this.column - this.auxWord.length));
+            this.auxWord = "";
+            state = 0;
           }
           break;
 
-         case 2: // número entero o decimal
+        case 2: // número entero o decimal
           if (this.isDigit(char)) {
             this.auxWord += char;
           } else if (char === ".") {
@@ -87,7 +91,7 @@ class LexicalAnalyzer {
               state = 0;
             } else {
               this.auxWord += char;
-              state = 7; // vamos a reconocer un float
+              state = 7;
             }
           } else {
             this.tokenList.push(new Token(Type.INTEGER, this.auxWord, this.row, this.column - this.auxWord.length));
@@ -96,6 +100,7 @@ class LexicalAnalyzer {
             i--;
           }
           break;
+
         case 3: // cadena de texto
           this.auxWord += char;
           if (char === '"') {
@@ -160,7 +165,7 @@ class LexicalAnalyzer {
           state = 0;
           break;
 
-        case 7: // decimal
+        case 7: // número decimal
           if (this.isDigit(char)) {
             this.auxWord += char;
           } else {
@@ -184,6 +189,14 @@ class LexicalAnalyzer {
 
   private isLetterOrDigit(char: string): boolean {
     return /[a-zA-Z0-9_]/.test(char);
+  }
+
+  private isWhitespace(char: string): boolean {
+    return /\s/.test(char);
+  }
+
+  private isSymbol(char: string): boolean {
+    return SYMBOLS.includes(char);
   }
 
   getTokenList(): Token[] {
