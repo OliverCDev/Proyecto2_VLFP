@@ -1,89 +1,105 @@
-# 📘 Manual del Usuario Final: Sistema de Análisis de Pensum y Carreras
 
-Este sistema permite analizar archivos con la estructura de carreras universitarias, identificar errores léxicos, y visualizar gráficamente las carreras, semestres y cursos, resaltando prerrequisitos.
+# 👤 Manual de Usuario - Proyecto 2
 
----
-![Menu principal](img/principal.png)
+## 🎯 Propósito
 
-## 🏠 Página Principal: Editor de Texto
-
-### Funcionalidad
-El editor es el punto de inicio donde puedes escribir o cargar un archivo `.plfp` que describe carreras y sus estructuras.
-
-### Opciones disponibles:
-- **✏️ Área de Texto**: Ingresar código manualmente.
-- **📤 Cargar Archivo**: Leer archivos `.plfp` desde tu equipo.
-- **💾 Guardar Archivo**: Descargar el contenido actual como `.plfp`.
-- **🔍 Analizar**: Envía el texto para su procesamiento léxico.
-
-### Resultado del análisis:
-- **Tabla de Tokens**: Muestra fila, columna, lexema y tipo de cada token reconocido.
-- **Texto resaltado por colores**:
-  - 🔵 Azul: Palabras reservadas
-  - 🟠 Naranja: Cadenas de texto
-  - 🟣 Morado: Números
-  - ⚫ Negro: Otros símbolos
-
-**🖼 Imagen de ejemplo del editor y resaltado:**
-![Editor con resaltado](img/editor.png)
-
-Además, puedes volver a editar después del análisis con el botón **"Volver a editar"**.
+Esta herramienta permite analizar código de un lenguaje similar a C# y obtener su traducción a TypeScript, junto con tokens, errores y tabla de símbolos.
 
 ---
 
-## 📚 Vista de Carreras, Semestres y Cursos
+## 🖥️ Interfaz Principal
 
-Si el análisis es exitoso, se abre automáticamente una nueva pestaña que presenta toda la estructura de carreras.
+Al ingresar a la aplicación web, verás:
 
-### ¿Qué muestra?
-- Nombre de la carrera.
-- Cada semestre con sus cursos.
-- Por cada curso:
-  - Número y nombre
-  - Área
-  - Prerrequisitos
-
-### Interactividad
-- Al hacer clic en un curso:
-  - Se marca en rojo (seleccionado).
-  - Se resaltan en amarillo los **prerrequisitos** del curso.
-- Cada carrera está identificada de forma única, incluso si comparten cursos similares entre sí.
-
-**🖼 Imagen de ejemplo de la vista de carreras:**
-![Vista de pensum](img/pensum.png)
+- **Editor de código**: donde escribes tu entrada
+- **Botón “Analizar”**: ejecuta el análisis
+- **Salida de consola**: muestra la ejecución del código
+- **Tabla de tokens**: muestra los tokens válidos encontrados
+- **Tabla de errores**: muestra los errores léxicos o sintácticos
+- **Tabla de símbolos**: identifica variables válidas
+- **Traducción generada**: código equivalente en TypeScript
 
 ---
 
-## ❌ Página de Errores Léxicos
+## ✍️ Cómo usar
 
-Si el texto tiene errores léxicos, se abrirá una nueva vista con los detalles.
+1. **Escribe tu código** en el editor. Ejemplo:
 
-### Tabla de errores:
-- **#**: Número de error
-- **Fila**: Línea donde ocurrió
-- **Columna**: Posición exacta
-- **Lexema**: Texto problemático
-- **Token**: Tipo de error
+   ```
+   int x = 5;
+   string saludo = "Hola";
+   Console.WriteLine(saludo);
+   ```
 
-Si no se encontraron errores, verás un mensaje indicando que no hay errores léxicos.
+2. Presiona **“Analizar”**
 
-**🖼 Imagen de ejemplo de errores:**
-![Vista de errores](img/error.png)
-
-## ℹ️ Consejos para el Usuario
-
-- Asegúrate de que el archivo `.plfp` siga la estructura definida (palabras reservadas como `"Carrera"`, `"Semestre"`, etc.).
-- Para corregir errores léxicos, revisa los lexemas indicados en la tabla de errores.
-- Puedes reanalizar el texto después de editarlo sin necesidad de recargar la página.
+3. Observa:
+   - Traducción generada
+   - Consola de salida (simulación de ejecución)
+   - Tokens válidos
+   - Errores detectados
+   - Tabla de símbolos
 
 ---
 
-## 🔁 Flujo Completo
+## 🔄 Ejemplo
 
-1. Escribe o carga un archivo `.plfp` en el editor.
-2. Haz clic en **"Analizar"**.
-3. Si hay errores: se muestra la **vista de errores**.
-4. Si no hay errores: se muestra la **vista de carreras y cursos**.
-5. Siempre puedes regresar al editor usando **“Volver al Editor”**.
+### Entrada:
+
+```cs
+int x = 10;
+string saludo = "Hola mundo";
+Console.WriteLine(saludo);
+```
+
+### Traducción:
+
+```ts
+let x = 10;
+let saludo = "Hola mundo";
+console.log(saludo);
+```
+
+### Salida en consola:
+
+```
+Hola mundo
+```
 
 ---
+
+## ❗ Errores
+
+Si cometes errores (como olvidarte un `;` o escribir mal un identificador), el sistema los mostrará en la sección de errores con fila y columna.
+
+---
+
+## 📋 Requisitos
+
+- Navegador actualizado
+- Tener el servidor ejecutándose con:
+
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## 🧼 Para reiniciar
+
+Recarga la página o modifica el código y vuelve a analizar.
+
+---
+
+## ✅ Funcionalidad Cubierta
+
+- Análisis léxico y sintáctico
+- Simulación de ejecución
+- Traducción a TypeScript
+- Tabla de símbolos
+- Reporte de errores
+
+---
+
+Gracias por usar el sistema 🎉

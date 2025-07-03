@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
-import LexicalAnalyzer from "../analyzer/LexicalAnalyzer";
-import { SyntaxAnalyzer } from "../analyzer/SyntaxAnalyzer";
-import { Transpiler } from "../analyzer/Transpiler";
 
-export const analizarLexico = (req: Request, res: Response): void => {
+import { Request, Response } from "express";
+import LexicalAnalyzer from "../Analyzer/LexicalAnalyzer";
+import { SyntaxAnalyzer } from "../Analyzer/SyntaxAnalyzer";
+import { Transpiler } from "../Analyzer/Transpiler";
+import { SymbolTable } from "../models/tools/SymbolTable";
+
+export const analizarLexico = (req: Request, res: Response): Response => {
   const { entrada } = req.body;
 
   if (!entrada || typeof entrada !== "string") {
-    res.status(400).json({ error: "Entrada inválida" });
-    return;
+    return res.status(400).json({ error: "Entrada inválida" });
   }
 
   const analizador = new LexicalAnalyzer();
@@ -33,9 +34,12 @@ export const analizarLexico = (req: Request, res: Response): void => {
       tokens,
       errores: erroresLexicos,
       salida: [],
-      traduccion: ""
+      traduccion: "",
+      simbolos: []
     });
   }
+
+  SymbolTable.clear();
 
   const parser = new SyntaxAnalyzer(analizador.getTokens());
   const instrucciones = parser.analizar();
@@ -44,10 +48,13 @@ export const analizarLexico = (req: Request, res: Response): void => {
   const traduccion = transpiler.translate();
   const salida = instrucciones.map(instr => instr.execute());
 
-  res.status(200).json({
+  const simbolos = SymbolTable.get();
+
+  return res.status(200).json({
     tokens,
     errores: [],
     traduccion,
-    salida
+    salida,
+    simbolos
   });
 };

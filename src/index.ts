@@ -1,23 +1,19 @@
-import express from 'express';
-import lexicoRouter from './routers/lexicoRouter';
-import path from 'path';
 
+import express from "express";
+import bodyParser from "body-parser";
+import path from "path";
+import analyzeRouter from "./routers/analyzeRouter";
 
 const app = express();
+const port = 3000;
 
-const PORT = 3000;
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "../public")));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "../views/pages"));
 
-app.use(express.urlencoded({ extended: false }));
-app.set('views', path.join(__dirname, '../views'));
-app.set('view engine', 'ejs');
-app.use(express.json());
+app.use("/api", analyzeRouter);
 
-app.use(express.text());
-app.use(lexicoRouter);
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Servidor corriendo en http://localhost:${port}`);
 });
-
-
-

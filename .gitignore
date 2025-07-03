@@ -33,3 +33,4 @@ Thumbs.db
 *.rar
 *.png
 *.pdf
+node_modules
